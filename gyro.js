@@ -9,12 +9,6 @@ board.on("ready", function() {
   let maxA = 0
   let minI = 5
   let maxI = 0
-  var gps = new five.GPS({
-    pins: {
-      rx: 0,
-      tx: 1,
-    }
-  });
   imu.on("change", function() {
     // console.log("Thermometer");
     // console.log("  celsius      : ", this.thermometer.celsius);
@@ -44,9 +38,6 @@ board.on("ready", function() {
     console.log('maxAAA----', maxA);
     console.log('minIII----',minI);
     console.log('maxIII----', maxI);
-    console.log("  latitude   : ", gps.latitude);
-    console.log("  longitude  : ", gps.longitude);
-    console.log("  altitude   : ", gps.altitude);
     //
     // console.log("Gyroscope");
     // console.log("  x            : ", this.gyro.x);
@@ -60,24 +51,4 @@ board.on("ready", function() {
     // console.log("--------------------------------------");
   });
 
-  /*
-   * This is the simplest initialization
-   * We assume SW_SERIAL0 for the port
-   */
-
-  // If latitude, longitude change log it
-  gps.on("change", function() {
-    console.log("position");
-    console.log("  latitude   : ", this.latitude);
-    console.log("  longitude  : ", this.longitude);
-    console.log("  altitude   : ", this.altitude);
-    console.log("--------------------------------------");
-  });
-  // If speed, course change log it
-  gps.on("navigation", function() {
-    console.log("navigation");
-    console.log("  speed   : ", this.speed);
-    console.log("  course  : ", this.course);
-    console.log("--------------------------------------");
-  });
 });
