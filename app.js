@@ -1,4 +1,5 @@
 var five = require("johnny-five");
+const axios = require('axios')
 var board = new five.Board();
 var db = require('./firebase.js')
 let key
@@ -19,25 +20,27 @@ board.on("ready", function() {
       }
     });
     let maxA = 0
+
     imu.on("change", function() {
-      if (this.accelerometer.acceleration > 2.5) {
-        db.ref('parcels/' + keys[keys.length - 1]).set({
-          gyro: {
-            threshold: true
-          }
-        });
+      if (this.accelerometer.acceleration > 2) {
+        db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
+	  .set(true);
+      }else{
+	      db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
+          .set(false);
       }
+      // console.log("  latitude   : ", gps.latitude);
+      // console.log("  longitude  : ", gps.longitude);
       if (gps.latitude !== 0 || gps.longitude !== 0) {
-        db.ref('parcels/' + keys[keys.length - 1]).set({
-          gps: {
-            lat: gps.latitude,
-            long: gps.longitude
-          }
+        db.ref('parcels/' + keys[keys.length - 1] + '/gps').set({
+           lat: gps.latitude,
+           long: gps.longitude
         });
       }
-      console.log(this.accelerometer.acceleration);
-      console.log("  latitude   : ", gps.latitude);
-      console.log("  longitude  : ", gps.longitude);
+      if (this.accelerometer.acceleration > 1.5) {
+        console.log(this.accelerometer.acceleration);
+      }
+      console.log(gps.longitude);
     });
   })
 });
