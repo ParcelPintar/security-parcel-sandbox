@@ -14,6 +14,7 @@
     "axios": "^0.18.0",
     "firebase": "^5.5.1",
     "johnny-five": "^1.0.0",
-    "keypress": "^0.2.1"
+    "keypress": "^0.2.1",
+    "raspi-io": "^9.0.0"
   }
 }
