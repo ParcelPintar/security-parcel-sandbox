@@ -15,16 +15,35 @@ board.on("ready", function() {
       controller: "MPU6050"
     });
     let count = 0
+    var piezo = new five.Piezo("P1-13");
+    board.repl.inject({
+      piezo: piezo
+    });
     //var gps = new five.GPS({});
     imu.on("change", function() {
       if (this.accelerometer.acceleration > 2) {
+	piezo.play({
+	  song: [
+           ["E5", 1],
+           ["C5", 1],
+           ["D5", 1],
+           ["G4", 2],
+           [null, 1],
+           ["G4", 1],
+           ["D5", 1],
+           ["E5", 1],
+           ["C5", 2],
+    	   [null, 1]
+	  ],
+	  tempo: 150
+	})
         db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
 	  .set(true);
       }else if(ppVal.gyro.threshold === true){
 	db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
           .set(false);
       }
-      if (this.accelerometer.acceleration > 1.5) {
+      if (this.accelerometer.acceleration > 2) {
         console.log(this.accelerometer.acceleration);
       }
       if(count < 1000){
