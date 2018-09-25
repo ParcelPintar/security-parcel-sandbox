@@ -1,3 +1,4 @@
+require('events').EventEmitter.prototype._maxListeners = 5
 var Raspi = require('raspi-io');
 var five = require("johnny-five");
 var board = new five.Board({
@@ -5,9 +6,10 @@ var board = new five.Board({
 });
 var db = require('./firebase.js');
 var axios = require('axios');
+let acc
 
 board.on("ready", function() {
-  db.ref('/parcels').on('value', (snapshot) => {
+   db.ref('/parcels').on('value', (snapshot) => {
     let keys = Object.keys(snapshot.val())
     console.log('Package id: ',keys[keys.length - 1]);
     let ppVal = snapshot.val()[keys[keys.length - 1]]
@@ -21,7 +23,8 @@ board.on("ready", function() {
     });
     //var gps = new five.GPS({});
     imu.on("change", function() {
-      if (this.accelerometer.acceleration > 2) {
+      let diff = Math.abs(acc - this.accelerometer.acceleration)
+      if (this.accelerometer.acceleration > 2.3 && diff > 0.2555) {
 	piezo.play({
 	  song: [
            ["E5", 1],
@@ -38,11 +41,16 @@ board.on("ready", function() {
 	  tempo: 150
 	})
         db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
-	  .set(true);
-      }else if(ppVal.gyro.threshold === true){
-	db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
+	  .set(true)
+	  .then(done=>{
+	    db.ref('parcels/' + keys[keys.length - 1] + '/gyro/threshold')
           .set(false);
+          })
+	  .catch(err=>{
+	  	console.log(err)
+          })
       }
+      acc = this.accelerometer.acceleration
       if (this.accelerometer.acceleration > 2) {
         console.log(this.accelerometer.acceleration);
       }
